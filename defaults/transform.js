@@ -39,6 +39,20 @@ module.exports = through.obj(
     getIds(obj)
     var p = storageRegex.exec(obj.fields.path)
     if (!p) { return cb() }
+
+    var code = 200
+
+    // support modern mozlog's use of errno for http status
+    if (!!obj.fields.errno) {
+        if (obj.fields.errno == 0) { // success
+            code = 200
+        } else {
+            code = obj.fields.errno
+        }
+    } else { // support sync's proprietary field
+        code = obj.fields.code
+    }
+
     var s = {
       uid: obj.uid || obj.synth_uid,
       s_uid: obj.synth_uid,
@@ -46,7 +60,7 @@ module.exports = through.obj(
       s_dev: obj.synth_dev,
       ts: obj.timestamp,
       method: obj.fields.method,
-      code: obj.fields.code,
+      code: code,
       bucket: p[1],
       t: (!!obj.fields.t ? obj.fields.t : Math.floor(obj.fields.request_time * 1000) || 0),
       ua_browser: obj.fields.user_agent_browser,
