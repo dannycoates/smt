@@ -48,7 +48,7 @@ module.exports = through.obj(
       method: obj.fields.method,
       code: obj.fields.code,
       bucket: p[1],
-      t: Math.floor(obj.fields.request_time * 1000) || 0,
+      t: (!!obj.fields.t ? obj.fields.t : Math.floor(obj.fields.request_time * 1000) || 0),
       ua_browser: obj.fields.user_agent_browser,
       ua_version: obj.fields.user_agent_version,
       ua_os: obj.fields.user_agent_os,
