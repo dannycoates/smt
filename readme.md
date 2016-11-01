@@ -149,6 +149,13 @@ insert into device_activity (
     decode(substring(ua_os,0,8), 'iPad', 'ios', 'iPod', 'ios', 'iPhone', 'ios', 'Android', 'android', 'Windows', 'windows', 'Macinto', 'mac', 'Linux', 'linux', null, 'unknown', 'other') as ua_os,
     ua_browser,
     ua_version,
+    case method when 'POST' then 1 end as posts,
+    case method when 'GET' then 1 end as gets,
+    case method when 'PUT' then 1 end as puts,
+    case method when 'DELETE' then 1 end as dels,
+    case when code < 300 then 1 end as aoks,
+    case when code > 399 and code < 500 then 1 end as oops,
+    case when code > 499 and code < 999 then 1 end as fups,
     case when bucket = 'clients' and method = 'GET' then 1 end as r_clients,
     case when bucket = 'crypto' and method = 'GET' then 1 end as r_crypto,
     case when bucket = 'forms' and method = 'GET' then 1 end as r_forms,
@@ -170,7 +177,7 @@ insert into device_activity (
     case when bucket = 'prefs' and method = 'POST' then 1 end as w_prefs,
     case when bucket = 'tabs' and method = 'POST' then 1 end as w_tabs,
     case when bucket = 'passwords' and method = 'POST' then 1 end as w_passwords,
-    case when bucket = 'addons' and method = 'POST' then 1 end as w_addons r_history,
+    case when bucket = 'addons' and method = 'POST' then 1 end as w_addons
   from sync0715)
 group by uid, dev);
 ```
